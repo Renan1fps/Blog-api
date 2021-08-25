@@ -16,6 +16,17 @@ class PostController {
     const post = await PostService.createPost({title, body})
     return response.status(200).json(post)
   }
+
+  public async deletePost(request: Request, response: Response): Promise<Response>{
+    const { id } = request.params
+
+    const post = await PostService.deletePost(id)
+    if(post === 'anime not found'){
+      return response.status(400).json(post)
+    }else{
+      return response.status(200).json('ok')
+    }
+  }
 }
 
 export { PostController }

@@ -7,6 +7,7 @@ const postsController = new PostController()
 
 postsRouter.get('/posts', postsController.getAllPosts)
 postsRouter.post('/posts', postsController.createPost)
+postsRouter.delete('/posts/:id', postsController.deletePost)
 
 export { postsRouter }
 

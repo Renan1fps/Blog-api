@@ -2,6 +2,7 @@ import { getCustomRepository } from "typeorm";
 import { IPost } from "../Contracts/IPost";
 import { PostRepository } from "../Database/repository/PostRepository";
 import { Posts } from "../Models/Post";
+import moment from "moment";
 
 class PostService {
 
@@ -11,7 +12,7 @@ class PostService {
     try{
 
       const postEntity = getCustomRepository(PostRepository)
-      response = await postEntity.find()
+      response = await postEntity.find({where:{ deleted_at: null}})
 
     }catch(err){
       console.error(err)
@@ -23,8 +24,6 @@ class PostService {
 
   public static async createPost({title, body}: IPost): Promise<Posts | undefined> {
     let response;
-
-    console.log(`O resultado é esse ${body} e ${title}`)
 
     const postDTO = {
       str_title: title,
@@ -44,6 +43,26 @@ class PostService {
 
     return response
     
+  }
+
+  public static async deletePost(id: string): Promise<Posts | string | undefined>{
+    let response;
+
+    try{
+
+      const postEntity = getCustomRepository(PostRepository)
+      const existPost = await postEntity.findOne({where:{deleted_at: null, id: id}})
+      if(existPost){
+        existPost.deleted_at = moment().toDate()
+        response = await postEntity.save(existPost)
+      }else{
+        return 'anime not found'
+      }
+
+    }catch (err) {
+      console.error(err)
+    }
+     return response
   }
 }
 
